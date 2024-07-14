@@ -77,8 +77,6 @@ export async function POST(request: NextRequest) {
     .setExpirationTime("2h")
     .sign(secret);
 
-  console.log(jwt);
-
   return NextResponse.json({
     success: true,
     message: "Successfully encoded JWT",
