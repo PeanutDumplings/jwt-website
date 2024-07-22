@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# JWT Website
 
-## Getting Started
+_A Next.js app that provides routes to easily and quickly encode data to JWTs (Json Web Tokens), decode data and verify JWTs. This app uses the [jose](https://www.npmjs.com/package/jose) package under the hood_
 
-First, run the development server:
+## Encoding Algorithms
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+| **Supported Algorithms** |
+| ------------------------ |
+| HS256                    |
+| HS384                    |
+| HS512                    |
+| PS256                    |
+| PS384                    |
+| PS512                    |
+| RS256                    |
+| RS384                    |
+| RS512                    |
+| ES256                    |
+| ES384                    |
+| ES512                    |
+| EdDSA                    |
+
+## Endpoints
+
+**The api can be accessed at https://jwt.apis.lol/**
+
+### 1. Encode JWT
+
+**Route:** `/api/jwt/encode`
+
+**Method:** `POST`
+
+**Description:** This endpoint takes a data object and encodes it to a JWT with provided options in the request body
+
+**Example Request Body:**
+
+```json
+{
+  "secret": "3Flr20py70ruEpZPCwWAAx2BgDyh0Xc$i&aSIeEtqHB*8&mSw%AuTvrRLUOZ^K%3", // The JWT secret
+  "expiry": 7200, // The time for the JWT to expire (seconds)
+  "algorithm": "HS256", // The algorithm to encode the JWT with
+  "data": {
+    "id": 1,
+    "username": "PeanutDumplings"
+  }
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Example Successful Response:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```json
+{
+  "success": true,
+  "message": "Successfully encoded JWT",
+  "jwt": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJQZWFudXREdW1wbGluZ3MiLCJpYXQiOjE3MjE2NDMyODcsImV4cCI6MTcyMTY1MDQ4N30.lq_BcbpXyfjtxhZ8OgDj15Y_QknFWsJEhaf9T8ZkQWQ"
+}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### 2. Decode JWT
 
-## Learn More
+**Route:** `/api/jwt/decode`
 
-To learn more about Next.js, take a look at the following resources:
+**Method:** `POST`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Description:** This endpoint decodes the data, given a jwt. No secret is required.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+**Example Request Body:**
 
-## Deploy on Vercel
+```json
+{
+  "jwt": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJQZWFudXREdW1wbGluZ3MiLCJpYXQiOjE3MjE2NDMyODcsImV4cCI6MTcyMTY1MDQ4N30.lq_BcbpXyfjtxhZ8OgDj15Y_QknFWsJEhaf9T8ZkQWQ"
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Example Successful Response:**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```json
+{
+  "success": true,
+  "message": "Successfully decoded JWT",
+  "data": {
+    "id": 1,
+    "username": "PeanutDumplings",
+    "iat": 1721643287,
+    "exp": 1721650487
+  }
+}
+```
+
+### 3. Verify JWT
+
+**Route:** `/api/jwt/verify`
+
+**Method:** `POST`
+
+**Description:** This endpoint takes a JWT and the secret in which the JWT was encoded with and verifies the signature of the JWT.
+
+**Example Request Body:**
+
+```json
+{
+  "secret": "test",
+  "jwt": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJQZWFudXREdW1wbGluZ3MiLCJpYXQiOjE3MjE2NDMyODcsImV4cCI6MTcyMTY1MDQ4N30.lq_BcbpXyfjtxhZ8OgDj15Y_QknFWsJEhaf9T8ZkQWQ"
+}
+```
+
+**Example Successful Response:**
+
+```json
+{
+  "success": true,
+  "message": "Successfully verified JWT"
+}
+```
